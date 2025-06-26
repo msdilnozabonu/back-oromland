@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oromland - Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+        .register-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .btn-register {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+        .register-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="register-container">
+            <div class="register-header">
+                <h2>Create an Account</h2>
+                <p class="text-muted">Join Oromland today</p>
+            </div>
+            
+            <div id="alertMessage" class="alert alert-danger d-none"></div>
+            
+            <form id="registerForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <small class="form-text text-muted">Password must be at least 8 characters long.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number</label>
+                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" required>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="birthDate">Birth Date</label>
+                            <input type="date" class="form-control" id="birthDate" name="birthDate" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select class="form-control" id="gender" name="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="MALE">Male</option>
+                                <option value="FEMALE">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-success btn-register mt-3">Register</button>
+            </form>
+            
+            <div class="register-footer">
+                <p>Already have an account? <a href="/login-page">Login here</a></p>
+                <a href="/" class="btn btn-link">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const gender = document.getElementById('gender').value;
+            
+            const alertMessage = document.getElementById('alertMessage');
+            alertMessage.classList.add('d-none');
+            
+            // Validate password length
+            if (password.length < 8) {
+                alertMessage.textContent = 'Password must be at least 8 characters long.';
+                alertMessage.classList.remove('d-none');
+                return;
+            }
+            
+            fetch('/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    password: password,
+                    phoneNumber: phoneNumber,
+                    birthDate: birthDate,
+                    gender: gender
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Registration failed');
+                });
+            })
+            .then(data => {
+                // Store token in localStorage
+                localStorage.setItem('token', data.token);
+                // Redirect to dashboard or home page
+                window.location.href = '/dashboard';
+            })
+            .catch(error => {
+                alertMessage.textContent = error.message;
+                alertMessage.classList.remove('d-none');
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

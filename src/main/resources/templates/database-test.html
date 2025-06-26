@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oromland - Database Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .section {
+            margin-bottom: 40px;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <h1 class="mb-4">Oromland Database Test</h1>
+        
+        <div class="d-flex justify-content-between mb-4">
+            <a href="/" class="btn btn-outline-primary">Back to Home</a>
+            <a href="/database/seed" class="btn btn-success">Seed Database</a>
+        </div>
+        
+        <!-- Cities Section -->
+        <div class="section">
+            <h2>Cities</h2>
+            <div class="table-container">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${cities.empty}">
+                            <td colspan="2" class="text-center">No cities found</td>
+                        </tr>
+                        <tr th:each="city : ${cities}">
+                            <td th:text="${city.id}"></td>
+                            <td th:text="${city.name}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Camps Section -->
+        <div class="section">
+            <h2>Camps</h2>
+            <div class="table-container">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Location</th>
+                            <th>Age Range</th>
+                            <th>Duration</th>
+                            <th>Seasons</th>
+                            <th>Dates</th>
+                            <th>Capacity</th>
+                            <th>Price</th>
+                            <th>City</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${camps.empty}">
+                            <td colspan="12" class="text-center">No camps found</td>
+                        </tr>
+                        <tr th:each="camp : ${camps}">
+                            <td th:text="${camp.id}"></td>
+                            <td th:text="${camp.name}"></td>
+                            <td th:text="${#strings.abbreviate(camp.description, 50)}"></td>
+                            <td th:text="${camp.location}"></td>
+                            <td th:text="${camp.ageFrom + '-' + camp.ageTo}"></td>
+                            <td th:text="${camp.duration + ' days'}"></td>
+                            <td th:text="${camp.availableSeasons}"></td>
+                            <td th:text="${#dates.format(camp.startDate, 'dd/MM/yyyy') + ' - ' + #dates.format(camp.endDate, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${camp.currentParticipants + '/' + camp.maxParticipants}"></td>
+                            <td th:text="${'$' + camp.price}"></td>
+                            <td th:text="${camp.city != null ? camp.city.name : 'N/A'}"></td>
+                            <td>
+                                <span th:if="${camp.isActive}" class="badge bg-success">Active</span>
+                                <span th:unless="${camp.isActive}" class="badge bg-danger">Inactive</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Sanatoriums Section -->
+        <div class="section">
+            <h2>Sanatoriums</h2>
+            <div class="table-container">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Location</th>
+                            <th>Seasons</th>
+                            <th>Capacity</th>
+                            <th>Daily Price</th>
+                            <th>Total Price</th>
+                            <th>City</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${sanatoriums.empty}">
+                            <td colspan="10" class="text-center">No sanatoriums found</td>
+                        </tr>
+                        <tr th:each="sanatorium : ${sanatoriums}">
+                            <td th:text="${sanatorium.id}"></td>
+                            <td th:text="${sanatorium.name}"></td>
+                            <td th:text="${#strings.abbreviate(sanatorium.description, 50)}"></td>
+                            <td th:text="${sanatorium.location}"></td>
+                            <td th:text="${sanatorium.availableSeasons}"></td>
+                            <td th:text="${sanatorium.currentCapacity + '/' + sanatorium.totalCapacity}"></td>
+                            <td th:text="${'$' + sanatorium.oneDayPrice}"></td>
+                            <td th:text="${'$' + sanatorium.totalPrice}"></td>
+                            <td th:text="${sanatorium.city != null ? sanatorium.city.name : 'N/A'}"></td>
+                            <td>
+                                <span th:if="${sanatorium.isActive}" class="badge bg-success">Active</span>
+                                <span th:unless="${sanatorium.isActive}" class="badge bg-danger">Inactive</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

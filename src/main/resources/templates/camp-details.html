@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oromland - Camp Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+    <style>
+        .camp-header {
+            background-color: #4a76a8;
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 30px;
+        }
+        .camp-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .amenity-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: #4a76a8;
+        }
+        .feature-card {
+            border-left: 4px solid #4a76a8;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+        .booking-card {
+            position: sticky;
+            top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .price-tag {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #4a76a8;
+        }
+        .review-card {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .star-rating {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Oromland</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Camps</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/test/sanatorium-list">Sanatoriums</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="/login-page" class="btn btn-outline-light me-2">Login</a>
+                    <a href="/register-page" class="btn btn-primary">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="camp-header">
+        <div class="container">
+            <h1 id="campName" th:text="${camp != null ? camp.name : 'Camp Name'}">Camp Name</h1>
+            <p class="lead" id="campLocation"><i class="bi bi-geo-alt-fill"></i> <span th:text="${camp != null ? camp.location : 'City, Region'}">City, Region</span></p>
+            <div class="d-flex align-items-center">
+                <div class="star-rating me-2">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-half"></i>
+                </div>
+                <span id="campRating">4.5</span>
+                <span class="mx-2">•</span>
+                <span id="reviewCount">24 reviews</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <img src="https://source.unsplash.com/random/800x400/?camp" class="camp-image" alt="Camp" id="campMainImage">
+                
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                        <img src="https://source.unsplash.com/random/300x200/?camp,nature" class="img-fluid rounded" alt="Camp Gallery">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <img src="https://source.unsplash.com/random/300x200/?camp,kids" class="img-fluid rounded" alt="Camp Gallery">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <img src="https://source.unsplash.com/random/300x200/?camp,activities" class="img-fluid rounded" alt="Camp Gallery">
+                    </div>
+                </div>
+
+                <h3 class="mb-4">About this camp</h3>
+                <p id="campDescription" class="mb-4" th:text="${camp != null ? camp.description : 'This is a wonderful summer camp located in a beautiful natural setting. The camp offers a variety of activities for children of all ages, including swimming, hiking, arts and crafts, sports, and more. Our experienced staff ensures that all children have a safe and enjoyable experience.'}">
+                    This is a wonderful summer camp located in a beautiful natural setting. The camp offers a variety of activities for children of all ages, including swimming, hiking, arts and crafts, sports, and more. Our experienced staff ensures that all children have a safe and enjoyable experience.
+                </p>
+
+                <h4 class="mb-3">Camp Features</h4>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="feature-card">
+                            <h5><i class="bi bi-calendar-check amenity-icon"></i> Duration</h5>
+                            <p id="campDuration" th:text="${camp != null ? camp.duration + ' days' : '14 days'}">14 days</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-card">
+                            <h5><i class="bi bi-people-fill amenity-icon"></i> Age Range</h5>
+                            <p id="campAgeRange" th:text="${camp != null ? camp.ageFrom + '-' + camp.ageTo + ' years' : '7-14 years'}">7-14 years</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-card">
+                            <h5><i class="bi bi-calendar3 amenity-icon"></i> Season</h5>
+                            <p id="campSeason" th:text="${camp != null ? camp.availableSeasons : 'Summer (June - August)'}">Summer (June - August)</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-card">
+                            <h5><i class="bi bi-house-door-fill amenity-icon"></i> Accommodation</h5>
+                            <p id="campAccommodation">Cabins with 4-6 beds</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="mb-3">Activities</h4>
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-water amenity-icon"></i>
+                            <span>Swimming</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-tree-fill amenity-icon"></i>
+                            <span>Hiking</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-palette-fill amenity-icon"></i>
+                            <span>Arts & Crafts</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-music-note-beamed amenity-icon"></i>
+                            <span>Music</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-dribbble amenity-icon"></i>
+                            <span>Sports</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-fire amenity-icon"></i>
+                            <span>Campfires</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="mb-3">Reviews</h4>
+                <div class="review-card">
+                    <div class="d-flex justify-content-between">
+                        <h5>John D.</h5>
+                        <div class="star-rating">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                    </div>
+                    <p class="text-muted">August 2023</p>
+                    <p>My son had an amazing time at this camp! The staff was friendly and professional, and the activities were engaging and fun. Highly recommend!</p>
+                </div>
+                <div class="review-card">
+                    <div class="d-flex justify-content-between">
+                        <h5>Sarah M.</h5>
+                        <div class="star-rating">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-muted">July 2023</p>
+                    <p>Great experience overall. My daughter loved the swimming and arts activities. The only downside was that the cabins could use some updating.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="booking-card">
+                    <h3 class="mb-3">Book this Camp</h3>
+                    <div class="mb-3">
+                        <span class="price-tag" id="campPrice" th:text="${camp != null ? '$' + camp.price : '$1,200'}">$1,200</span>
+                        <span class="text-muted"> / session</span>
+                    </div>
+                    
+                    <form id="bookingForm">
+                        <div class="mb-3">
+                            <label for="sessionSelect" class="form-label">Select Session</label>
+                            <select class="form-select" id="sessionSelect">
+                                <option value="1">June 1-14, 2023</option>
+                                <option value="2">June 15-28, 2023</option>
+                                <option value="3">July 1-14, 2023</option>
+                                <option value="4">July 15-28, 2023</option>
+                                <option value="5">August 1-14, 2023</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="childrenCount" class="form-label">Number of Children</label>
+                            <select class="form-select" id="childrenCount">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                        <a href="/test/camp-booking" class="btn btn-primary w-100 btn-lg">Proceed to Booking</a>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-shield-check amenity-icon"></i>
+                        <span>Safe and secure booking</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-calendar2-check amenity-icon"></i>
+                        <span>Flexible scheduling</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-telephone-fill amenity-icon"></i>
+                        <span>24/7 customer support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5>Oromland</h5>
+                    <p>Your gateway to a better experience for camps and sanatoriums.</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-white">Home</a></li>
+                        <li><a href="#" class="text-white">Camps</a></li>
+                        <li><a href="/test/sanatorium-list" class="text-white">Sanatoriums</a></li>
+                        <li><a href="/login-page" class="text-white">Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Contact Us</h5>
+                    <address class="text-white">
+                        <i class="bi bi-geo-alt-fill"></i> 123 Main Street, City<br>
+                        <i class="bi bi-envelope-fill"></i> <a href="mailto:info@oromland.com" class="text-white">info@oromland.com</a><br>
+                        <i class="bi bi-telephone-fill"></i> +1 (123) 456-7890
+                    </address>
+                </div>
+            </div>
+            <hr class="my-3 bg-light">
+            <div class="text-center">
+                <p>&copy; 2023 Oromland. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // This would be replaced with actual data fetching in a real implementation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate fetching camp data
+            const campId = new URLSearchParams(window.location.search).get('id') || 1;
+            
+            // In a real implementation, you would fetch data from the server
+            // For example: fetch(`/api/camps/${cityId}/${campId}`)
+            //   .then(response => response.json())
+            //   .then(data => populateCampData(data));
+            
+            // For demo purposes, we'll just use mock data
+            const mockCampData = {
+                id: campId,
+                name: "Pine Valley Summer Camp",
+                location: "Mountain View, Colorado",
+                rating: 4.5,
+                reviewCount: 24,
+                price: "$1,200",
+                description: "This is a wonderful summer camp located in a beautiful natural setting. The camp offers a variety of activities for children of all ages, including swimming, hiking, arts and crafts, sports, and more. Our experienced staff ensures that all children have a safe and enjoyable experience.",
+                duration: "14 days",
+                ageRange: "7-14 years",
+                season: "Summer (June - August)",
+                accommodation: "Cabins with 4-6 beds"
+            };
+            
+            // Populate the page with mock data
+            document.getElementById('campName').textContent = mockCampData.name;
+            document.getElementById('campLocation').innerHTML = `<i class="bi bi-geo-alt-fill"></i> ${mockCampData.location}`;
+            document.getElementById('campRating').textContent = mockCampData.rating;
+            document.getElementById('reviewCount').textContent = `${mockCampData.reviewCount} reviews`;
+            document.getElementById('campDescription').textContent = mockCampData.description;
+            document.getElementById('campDuration').textContent = mockCampData.duration;
+            document.getElementById('campAgeRange').textContent = mockCampData.ageRange;
+            document.getElementById('campSeason').textContent = mockCampData.season;
+            document.getElementById('campAccommodation').textContent = mockCampData.accommodation;
+            document.getElementById('campPrice').textContent = mockCampData.price;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oromland - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 60px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            background-color: #343a40;
+        }
+        .sidebar-sticky {
+            position: relative;
+            top: 0;
+            height: calc(100vh - 48px);
+            padding-top: 0.5rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .nav-link {
+            color: #ced4da;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+        }
+        .nav-link:hover {
+            color: #fff;
+        }
+        .nav-link.active {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .main-content {
+            margin-left: 240px;
+            padding: 20px;
+        }
+        .welcome-card {
+            background-color: #4a76a8;
+            color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Oromland Dashboard</a>
+            <button id="logoutBtn" class="btn btn-outline-light">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                <span data-feather="home"></span>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="file"></span>
+                                Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="shopping-cart"></span>
+                                Settings
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="main-content">
+                <div class="welcome-card">
+                    <h2>Welcome to Your Dashboard</h2>
+                    <p>You have successfully logged in to Oromland.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Recent Activity</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>No recent activity to display.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group">
+                                    <a href="#" class="list-group-item list-group-item-action">Update Profile</a>
+                                    <a href="#" class="list-group-item list-group-item-action">Change Password</a>
+                                    <a href="#" class="list-group-item list-group-item-action">View Notifications</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        // Initialize Feather icons
+        feather.replace();
+        
+        // Check if token exists
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth();
+        });
+        
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            logout();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oromland - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 40px;
+        }
+        .login-container {
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-floating {
+            margin-bottom: 20px;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div class="login-header">
+                <h2>Login to Oromland</h2>
+                <p class="text-muted">Enter your credentials to access your account</p>
+            </div>
+            
+            <div th:if="${param.error}" class="alert alert-danger">
+                Invalid username or password.
+            </div>
+            
+            <form id="loginForm" method="post" action="/auth/login">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                    <label for="username">Username</label>
+                </div>
+                
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                    <label for="password">Password</label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-login">Login</button>
+            </form>
+            
+            <div class="login-footer">
+                <p>Don't have an account? <a href="/register-page">Register here</a></p>
+                <a href="/" class="btn btn-link">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            fetch('/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Login failed');
+            })
+            .then(data => {
+                // Store token in localStorage
+                localStorage.setItem('token', data.token);
+                // Redirect to dashboard or home page
+                window.location.href = '/dashboard';
+            })
+            .catch(error => {
+                alert('Login failed. Please check your credentials.');
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

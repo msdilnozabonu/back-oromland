@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oromland - Camp Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+    <style>
+        .booking-header {
+            background-color: #4a76a8;
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        .booking-form {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .booking-summary {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .summary-total {
+            font-weight: bold;
+            border-top: 1px solid #dee2e6;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .form-section {
+            margin-bottom: 30px;
+        }
+        .form-section-title {
+            border-bottom: 2px solid #4a76a8;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: #4a76a8;
+        }
+        .required-field::after {
+            content: "*";
+            color: red;
+            margin-left: 4px;
+        }
+        .file-upload {
+            border: 2px dashed #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .file-upload:hover {
+            border-color: #4a76a8;
+            background-color: #f8f9fa;
+        }
+        .upload-icon {
+            font-size: 2rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Oromland</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/test/camp-details">Camps</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/test/sanatorium-list">Sanatoriums</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="/login-page" class="btn btn-outline-light me-2">Login</a>
+                    <a href="/register-page" class="btn btn-primary">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="booking-header">
+        <div class="container">
+            <h1>Book Your Camp</h1>
+            <p class="lead">Complete the form below to book your spot at <span id="campName" th:text="${camp != null ? camp.name : 'Pine Valley Summer Camp'}">Pine Valley Summer Camp</span></p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <form id="campBookingForm" class="booking-form">
+                    <div class="form-section">
+                        <h3 class="form-section-title">Session Information</h3>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="sessionSelect" class="form-label required-field">Select Session</label>
+                                <select class="form-select" id="sessionSelect" required>
+                                    <option value="">Choose a session</option>
+                                    <option value="1">June 1-14, 2023</option>
+                                    <option value="2">June 15-28, 2023</option>
+                                    <option value="3">July 1-14, 2023</option>
+                                    <option value="4">July 15-28, 2023</option>
+                                    <option value="5">August 1-14, 2023</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="childrenCount" class="form-label required-field">Number of Children</label>
+                                <select class="form-select" id="childrenCount" required>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">Child Information</h3>
+                        <div id="childInfoContainer">
+                            <!-- Child 1 info -->
+                            <div class="child-info mb-4" data-child-index="1">
+                                <h4 class="mb-3">Child 1</h4>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="firstName1" class="form-label required-field">First Name</label>
+                                        <input type="text" class="form-control" id="firstName1" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lastName1" class="form-label required-field">Last Name</label>
+                                        <input type="text" class="form-control" id="lastName1" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="birthdate1" class="form-label required-field">Date of Birth</label>
+                                        <input type="date" class="form-control" id="birthdate1" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="gender1" class="form-label required-field">Gender</label>
+                                        <select class="form-select" id="gender1" required>
+                                            <option value="">Select gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="allergies1" class="form-label">Allergies or Medical Conditions</label>
+                                    <textarea class="form-control" id="allergies1" rows="2" placeholder="Please list any allergies, medical conditions, or special needs"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="medications1" class="form-label">Current Medications</label>
+                                    <textarea class="form-control" id="medications1" rows="2" placeholder="Please list any medications your child is currently taking"></textarea>
+                                </div>
+                            </div>
+                            <!-- Additional child info sections will be added dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">Parent/Guardian Information</h3>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="parentFirstName" class="form-label required-field">First Name</label>
+                                <input type="text" class="form-control" id="parentFirstName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="parentLastName" class="form-label required-field">Last Name</label>
+                                <input type="text" class="form-control" id="parentLastName" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="parentEmail" class="form-label required-field">Email</label>
+                                <input type="email" class="form-control" id="parentEmail" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="parentPhone" class="form-label required-field">Phone Number</label>
+                                <input type="tel" class="form-control" id="parentPhone" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="parentAddress" class="form-label required-field">Address</label>
+                            <input type="text" class="form-control" id="parentAddress" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="parentCity" class="form-label required-field">City</label>
+                                <input type="text" class="form-control" id="parentCity" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="parentZip" class="form-label required-field">Postal/Zip Code</label>
+                                <input type="text" class="form-control" id="parentZip" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">Emergency Contact</h3>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="emergencyName" class="form-label required-field">Full Name</label>
+                                <input type="text" class="form-control" id="emergencyName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="emergencyRelation" class="form-label required-field">Relationship to Child</label>
+                                <input type="text" class="form-control" id="emergencyRelation" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="emergencyPhone" class="form-label required-field">Phone Number</label>
+                                <input type="tel" class="form-control" id="emergencyPhone" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="emergencyEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="emergencyEmail">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">Required Documents</h3>
+                        <p class="text-muted mb-4">Please upload the following documents. All files should be in PDF, JPG, or PNG format and less than 5MB in size.</p>
+                        
+                        <div class="mb-4">
+                            <label class="form-label required-field">Health Note/Medical Certificate</label>
+                            <div class="file-upload" id="healthNoteUpload">
+                                <i class="bi bi-file-earmark-medical upload-icon"></i>
+                                <p class="mb-1">Drag and drop your file here or click to browse</p>
+                                <p class="text-muted small">PDF, JPG, or PNG (max. 5MB)</p>
+                                <input type="file" class="d-none" id="healthNoteFile" accept=".pdf,.jpg,.jpeg,.png" required>
+                            </div>
+                            <div id="healthNoteFileInfo" class="small text-muted"></div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label required-field">Birth Certificate</label>
+                            <div class="file-upload" id="birthCertificateUpload">
+                                <i class="bi bi-file-earmark-text upload-icon"></i>
+                                <p class="mb-1">Drag and drop your file here or click to browse</p>
+                                <p class="text-muted small">PDF, JPG, or PNG (max. 5MB)</p>
+                                <input type="file" class="d-none" id="birthCertificateFile" accept=".pdf,.jpg,.jpeg,.png" required>
+                            </div>
+                            <div id="birthCertificateFileInfo" class="small text-muted"></div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label required-field">Recent Photo</label>
+                            <div class="file-upload" id="photoUpload">
+                                <i class="bi bi-file-earmark-image upload-icon"></i>
+                                <p class="mb-1">Drag and drop your file here or click to browse</p>
+                                <p class="text-muted small">JPG or PNG (max. 5MB)</p>
+                                <input type="file" class="d-none" id="photoFile" accept=".jpg,.jpeg,.png" required>
+                            </div>
+                            <div id="photoFileInfo" class="small text-muted"></div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label required-field">Parent's Passport</label>
+                            <div class="file-upload" id="parentPassportUpload">
+                                <i class="bi bi-file-earmark-person upload-icon"></i>
+                                <p class="mb-1">Drag and drop your file here or click to browse</p>
+                                <p class="text-muted small">PDF, JPG, or PNG (max. 5MB)</p>
+                                <input type="file" class="d-none" id="parentPassportFile" accept=".pdf,.jpg,.jpeg,.png" required>
+                            </div>
+                            <div id="parentPassportFileInfo" class="small text-muted"></div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Guardian Permission (if applicable)</label>
+                            <div class="file-upload" id="guardianPermissionUpload">
+                                <i class="bi bi-file-earmark upload-icon"></i>
+                                <p class="mb-1">Drag and drop your file here or click to browse</p>
+                                <p class="text-muted small">PDF, JPG, or PNG (max. 5MB)</p>
+                                <input type="file" class="d-none" id="guardianPermissionFile" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                            <div id="guardianPermissionFileInfo" class="small text-muted"></div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Privilege Document (if applicable)</label>
+                            <div class="file-upload" id="privilegeDocumentUpload">
+                                <i class="bi bi-file-earmark upload-icon"></i>
+                                <p class="mb-1">Drag and drop your file here or click to browse</p>
+                                <p class="text-muted small">PDF, JPG, or PNG (max. 5MB)</p>
+                                <input type="file" class="d-none" id="privilegeDocumentFile" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                            <div id="privilegeDocumentFileInfo" class="small text-muted"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">Terms and Conditions</h3>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="termsCheck" required>
+                            <label class="form-check-label" for="termsCheck">
+                                I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>
+                            </label>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="medicalCheck" required>
+                            <label class="form-check-label" for="medicalCheck">
+                                I authorize the camp staff to provide medical treatment if necessary
+                            </label>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="photoCheck" required>
+                            <label class="form-check-label" for="photoCheck">
+                                I give permission for my child to be photographed during camp activities
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Complete Booking</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="booking-summary">
+                    <h3 class="mb-4">Booking Summary</h3>
+                    <div class="mb-3">
+                        <h5 id="summaryTitle" th:text="${camp != null ? camp.name : 'Pine Valley Summer Camp'}">Pine Valley Summer Camp</h5>
+                        <p class="text-muted" id="summarySession" th:text="${camp != null ? 'Session: ' + #dates.format(camp.startDate, 'MMM d') + ' - ' + #dates.format(camp.endDate, 'MMM d, yyyy') : 'Session: June 1-14, 2023'}">Session: June 1-14, 2023</p>
+                    </div>
+                    <div class="summary-item">
+                        <span>Camp Fee</span>
+                        <span id="campFee">$1,200.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Number of Children</span>
+                        <span id="summaryChildrenCount">1</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Registration Fee</span>
+                        <span>$50.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Insurance</span>
+                        <span>$25.00</span>
+                    </div>
+                    <div class="summary-item summary-total">
+                        <span>Total</span>
+                        <span id="totalAmount">$1,275.00</span>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <h5>What's Included</h5>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Accommodation</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> All meals and snacks</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Activities and equipment</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Supervision by qualified staff</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i> Camp t-shirt and materials</li>
+                        </ul>
+                    </div>
+                    <div class="mb-3">
+                        <h5>Need Help?</h5>
+                        <p>If you have any questions about the booking process, please contact us:</p>
+                        <p><i class="bi bi-telephone-fill me-2"></i> +1 (123) 456-7890</p>
+                        <p><i class="bi bi-envelope-fill me-2"></i> bookings@oromland.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms and Conditions Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>1. Registration and Payment</h5>
+                    <p>All registrations must be completed through our online booking system. A non-refundable deposit of 25% is required at the time of booking to secure your child's place. The remaining balance must be paid at least 30 days before the camp start date.</p>
+                    
+                    <h5>2. Cancellation Policy</h5>
+                    <p>Cancellations made more than 30 days before the camp start date will receive a refund of any payments made, minus the non-refundable deposit. Cancellations made less than 30 days before the camp start date are not eligible for a refund unless the spot can be filled from a waiting list.</p>
+                    
+                    <h5>3. Health and Safety</h5>
+                    <p>Parents/guardians must provide accurate and complete health information for their child. The camp reserves the right to refuse admission to any child whose health condition, in our judgment, would prevent them from participating safely in camp activities.</p>
+                    
+                    <h5>4. Behavior Expectations</h5>
+                    <p>Campers are expected to behave respectfully toward staff and other campers. The camp reserves the right to dismiss any camper whose behavior is deemed inappropriate or disruptive, without refund.</p>
+                    
+                    <h5>5. Personal Property</h5>
+                    <p>The camp is not responsible for lost, stolen, or damaged personal items. We recommend that valuable items be left at home.</p>
+                    
+                    <h5>6. Medical Treatment Authorization</h5>
+                    <p>By agreeing to these terms, you authorize the camp staff to provide first aid and seek emergency medical treatment for your child if necessary. You agree to be responsible for any costs associated with such treatment.</p>
+                    
+                    <h5>7. Photography Release</h5>
+                    <p>By agreeing to these terms, you grant permission for the camp to use photographs or videos of your child for promotional materials, unless you specifically opt out in writing.</p>
+                    
+                    <h5>8. Force Majeure</h5>
+                    <p>The camp is not liable for failure to perform its obligations if such failure is as a result of Acts of God, including fire, flood, earthquake, storm, hurricane or other natural disaster, war, invasion, civil unrest, government action, or other events beyond our reasonable control.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5>Oromland</h5>
+                    <p>Your gateway to a better experience for camps and sanatoriums.</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-white">Home</a></li>
+                        <li><a href="/test/camp-details" class="text-white">Camps</a></li>
+                        <li><a href="/test/sanatorium-list" class="text-white">Sanatoriums</a></li>
+                        <li><a href="/login-page" class="text-white">Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Contact Us</h5>
+                    <address class="text-white">
+                        <i class="bi bi-geo-alt-fill"></i> 123 Main Street, City<br>
+                        <i class="bi bi-envelope-fill"></i> <a href="mailto:info@oromland.com" class="text-white">info@oromland.com</a><br>
+                        <i class="bi bi-telephone-fill"></i> +1 (123) 456-7890
+                    </address>
+                </div>
+            </div>
+            <hr class="my-3 bg-light">
+            <div class="text-center">
+                <p>&copy; 2023 Oromland. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle file uploads
+            const fileUploads = [
+                { uploadId: 'healthNoteUpload', fileId: 'healthNoteFile', infoId: 'healthNoteFileInfo' },
+                { uploadId: 'birthCertificateUpload', fileId: 'birthCertificateFile', infoId: 'birthCertificateFileInfo' },
+                { uploadId: 'photoUpload', fileId: 'photoFile', infoId: 'photoFileInfo' },
+                { uploadId: 'parentPassportUpload', fileId: 'parentPassportFile', infoId: 'parentPassportFileInfo' },
+                { uploadId: 'guardianPermissionUpload', fileId: 'guardianPermissionFile', infoId: 'guardianPermissionFileInfo' },
+                { uploadId: 'privilegeDocumentUpload', fileId: 'privilegeDocumentFile', infoId: 'privilegeDocumentFileInfo' }
+            ];
+            
+            fileUploads.forEach(upload => {
+                const uploadElement = document.getElementById(upload.uploadId);
+                const fileElement = document.getElementById(upload.fileId);
+                const infoElement = document.getElementById(upload.infoId);
+                
+                uploadElement.addEventListener('click', () => {
+                    fileElement.click();
+                });
+                
+                fileElement.addEventListener('change', () => {
+                    if (fileElement.files.length > 0) {
+                        const file = fileElement.files[0];
+                        const fileSize = (file.size / 1024 / 1024).toFixed(2); // Convert to MB
+                        
+                        if (fileSize > 5) {
+                            infoElement.innerHTML = `<span class="text-danger">File too large: ${fileSize}MB (max 5MB)</span>`;
+                            fileElement.value = '';
+                        } else {
+                            infoElement.innerHTML = `<span class="text-success">File selected: ${file.name} (${fileSize}MB)</span>`;
+                            uploadElement.style.borderColor = '#4a76a8';
+                            uploadElement.style.backgroundColor = '#e9f0f7';
+                        }
+                    } else {
+                        infoElement.innerHTML = '';
+                        uploadElement.style.borderColor = '#dee2e6';
+                        uploadElement.style.backgroundColor = '';
+                    }
+                });
+                
+                // Handle drag and drop
+                uploadElement.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadElement.style.borderColor = '#4a76a8';
+                    uploadElement.style.backgroundColor = '#e9f0f7';
+                });
+                
+                uploadElement.addEventListener('dragleave', () => {
+                    if (!fileElement.files.length) {
+                        uploadElement.style.borderColor = '#dee2e6';
+                        uploadElement.style.backgroundColor = '';
+                    }
+                });
+                
+                uploadElement.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    if (e.dataTransfer.files.length > 0) {
+                        fileElement.files = e.dataTransfer.files;
+                        const file = fileElement.files[0];
+                        const fileSize = (file.size / 1024 / 1024).toFixed(2); // Convert to MB
+                        
+                        if (fileSize > 5) {
+                            infoElement.innerHTML = `<span class="text-danger">File too large: ${fileSize}MB (max 5MB)</span>`;
+                            fileElement.value = '';
+                            uploadElement.style.borderColor = '#dee2e6';
+                            uploadElement.style.backgroundColor = '';
+                        } else {
+                            infoElement.innerHTML = `<span class="text-success">File selected: ${file.name} (${fileSize}MB)</span>`;
+                        }
+                    }
+                });
+            });
+            
+            // Handle number of children selection
+            const childrenCountSelect = document.getElementById('childrenCount');
+            const childInfoContainer = document.getElementById('childInfoContainer');
+            
+            childrenCountSelect.addEventListener('change', function() {
+                const count = parseInt(this.value);
+                const currentChildren = childInfoContainer.querySelectorAll('.child-info').length;
+                
+                // Update summary
+                document.getElementById('summaryChildrenCount').textContent = count;
+                updateTotal(count);
+                
+                if (count > currentChildren) {
+                    // Add more child info sections
+                    for (let i = currentChildren + 1; i <= count; i++) {
+                        const childSection = document.createElement('div');
+                        childSection.className = 'child-info mb-4';
+                        childSection.dataset.childIndex = i;
+                        
+                        childSection.innerHTML = `
+                            <h4 class="mb-3">Child ${i}</h4>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName${i}" class="form-label required-field">First Name</label>
+                                    <input type="text" class="form-control" id="firstName${i}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastName${i}" class="form-label required-field">Last Name</label>
+                                    <input type="text" class="form-control" id="lastName${i}" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="birthdate${i}" class="form-label required-field">Date of Birth</label>
+                                    <input type="date" class="form-control" id="birthdate${i}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="gender${i}" class="form-label required-field">Gender</label>
+                                    <select class="form-select" id="gender${i}" required>
+                                        <option value="">Select gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="allergies${i}" class="form-label">Allergies or Medical Conditions</label>
+                                <textarea class="form-control" id="allergies${i}" rows="2" placeholder="Please list any allergies, medical conditions, or special needs"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="medications${i}" class="form-label">Current Medications</label>
+                                <textarea class="form-control" id="medications${i}" rows="2" placeholder="Please list any medications your child is currently taking"></textarea>
+                            </div>
+                        `;
+                        
+                        childInfoContainer.appendChild(childSection);
+                    }
+                } else if (count < currentChildren) {
+                    // Remove excess child info sections
+                    const childSections = childInfoContainer.querySelectorAll('.child-info');
+                    for (let i = count; i < currentChildren; i++) {
+                        childInfoContainer.removeChild(childSections[i]);
+                    }
+                }
+            });
+            
+            // Handle session selection
+            const sessionSelect = document.getElementById('sessionSelect');
+            sessionSelect.addEventListener('change', function() {
+                const sessionText = this.options[this.selectedIndex].text;
+                document.getElementById('summarySession').textContent = 'Session: ' + sessionText;
+            });
+            
+            // Update total amount based on number of children
+            function updateTotal(count) {
+                const campFee = 1200;
+                const registrationFee = 50;
+                const insuranceFee = 25;
+                const total = (campFee * count) + registrationFee + insuranceFee;
+                
+                document.getElementById('campFee').textContent = '$' + (campFee * count).toFixed(2);
+                document.getElementById('totalAmount').textContent = '$' + total.toFixed(2);
+            }
+            
+            // Form submission
+            const bookingForm = document.getElementById('campBookingForm');
+            bookingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // In a real implementation, you would collect all form data and submit it to the server
+                // For demo purposes, we'll just show an alert
+                alert('Booking submitted successfully! You would be redirected to a payment page in a real implementation.');
+                
+                // In a real implementation, you would redirect to a payment page or confirmation page
+                // window.location.href = '/payment.html';
+            });
+        });
+    </script>
+</body>
+</html>
