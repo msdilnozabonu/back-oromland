@@ -93,7 +93,7 @@ public class SanatoriumServiceImpl implements SanatoriumService {
             givenDocumentEntity = attachmentMapper.toEntity(attachmentService.upload(givenDocumentByWorkplace));
         }
 
-        UserDTO userDTO = userService.getUserById(bookingSanatoriumDTO.getUser().getId());
+        UserDTO userDTO = userService.getUserById(bookingSanatoriumDTO.getUserId());
 
         User user = userMapper.toEntity(userDTO);
 
